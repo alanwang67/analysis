@@ -246,7 +246,7 @@ theorem Nat.succ_gt_self (n:Nat) : n++ > n := by
 
 (a) (Order is reflexive). Compare with Mathlib's `Nat.le_refl`.-/
 theorem Nat.ge_refl (a:Nat) : a ≥ a := by
-  sorry
+  rw [ge_iff_le, le_iff_lt_or_eq]; right; rfl
 
 @[refl]
 theorem Nat.le_refl (a:Nat) : a ≤ a := a.ge_refl
