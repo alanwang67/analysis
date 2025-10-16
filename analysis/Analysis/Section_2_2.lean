@@ -83,7 +83,10 @@ lemma Nat.add_succ (n m:Nat) : n + (m++) = (n + m)++ := by
 
 /-- n++ = n + 1 (Why?). Compare with Mathlib's `Nat.succ_eq_add_one` -/
 theorem Nat.succ_eq_add_one (n:Nat) : n++ = n + 1 := by
-  sorry
+  revert n; apply induction
+  . rw [zero_add, ← one_add, add_zero]
+  . intro n ih
+    rw [ih, ← add_succ, ← ih, succ_add, add_succ]
 
 /-- Proposition 2.2.4 (Addition is commutative). Compare with Mathlib's `Nat.add_comm` -/
 theorem Nat.add_comm (n m:Nat) : n + m = m + n := by
@@ -97,7 +100,10 @@ theorem Nat.add_comm (n m:Nat) : n + m = m + n := by
 /-- Proposition 2.2.5 (Addition is associative) / Exercise 2.2.1
     Compare with Mathlib's `Nat.add_assoc`. -/
 theorem Nat.add_assoc (a b c:Nat) : (a + b) + c = a + (b + c) := by
-  sorry
+  revert a; apply induction
+  . rw [zero_add, zero_add]
+  intro n ih
+  rw [succ_add, succ_add, ih, ← succ_add]
 
 /-- Proposition 2.2.6 (Cancellation law).
     Compare with Mathlib's `Nat.add_left_cancel`. -/
@@ -174,7 +180,15 @@ extracts a witness `x` and a proof `hx : P x` of the property from a hypothesis 
 
 /-- Lemma 2.2.10 (unique predecessor) / Exercise 2.2.2 -/
 lemma Nat.uniq_succ_eq (a:Nat) (ha: a.IsPos) : ∃! b, b++ = a := by
-  sorry
+  apply existsUnique_of_exists_of_unique
+  . rw [isPos_iff] at ha
+    revert a; apply induction
+    . intros; contradiction
+    intros a h1 h2
+    exists a
+  intros y1 y2 h1 h2
+  rw [← h2] at h1
+  injection h1
 
 /-- Definition 2.2.11 (Ordering of the natural numbers).
     This defines the `≤` notation on the natural numbers. -/
@@ -220,7 +234,13 @@ example : (8:Nat) > 5 := by
 
 /-- Compare with Mathlib's `Nat.lt_succ_self`. -/
 theorem Nat.succ_gt_self (n:Nat) : n++ > n := by
-  sorry
+  rw [Nat.gt_iff_lt, Nat.lt_iff]
+  constructor
+  . exists 1; rw [← one_add, add_comm]
+  rw [← one_add]
+  induction n with
+  | zero => simp
+  | succ n ih => rw [add_succ]; apply succ_ne_succ; exact ih
 
 /-- Proposition 2.2.12 (Basic properties of order for natural numbers) / Exercise 2.2.3
 
