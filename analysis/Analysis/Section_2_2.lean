@@ -257,13 +257,31 @@ example (a b:Nat): a+b ≥ a+b := by rfl
 /-- (b) (Order is transitive).  The `obtain` tactic will be useful here.
     Compare with Mathlib's `Nat.le_trans`. -/
 theorem Nat.ge_trans {a b c:Nat} (hab: a ≥ b) (hbc: b ≥ c) : a ≥ c := by
-  sorry
+  rw [ge_iff_le, le_iff] at hab
+  rw [ge_iff_le, le_iff] at hbc
+  obtain ⟨ x, hx ⟩ := hab
+  obtain ⟨ x1, hx1 ⟩ := hbc
+  rw [hx1] at hx
+  rw [hx]
+  rw [ge_iff_le]; rw [le_iff]
+  use (x1 + x)
+  rw [add_assoc]
 
 theorem Nat.le_trans {a b c:Nat} (hab: a ≤ b) (hbc: b ≤ c) : a ≤ c := Nat.ge_trans hbc hab
 
 /-- (c) (Order is anti-symmetric). Compare with Mathlib's `Nat.le_antisymm`. -/
 theorem Nat.ge_antisymm {a b:Nat} (hab: a ≥ b) (hba: b ≥ a) : a = b := by
-  sorry
+  rw [ge_iff_le, le_iff_lt_or_eq] at hab;
+  rw [ge_iff_le, le_iff_lt_or_eq] at hba
+  cases' hab with h1
+  . cases' hba with h2
+    . rw [lt_iff] at h1; rw [lt_iff] at h2
+      obtain ⟨ hl, hr ⟩ := h1
+      obtain ⟨ x, hx ⟩ := hl
+      obtain ⟨ hl1, hr1 ⟩ := h2
+      obtain ⟨ x1, hx1 ⟩ := hl1
+      rw [hx] at hx1
+      sorry
 
 /-- (d) (Addition preserves order).  Compare with Mathlib's `Nat.add_le_add_right`. -/
 theorem Nat.add_ge_add_right (a b c:Nat) : a ≥ b ↔ a + c ≥ b + c := by
